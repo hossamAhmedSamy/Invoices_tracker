@@ -1,0 +1,583 @@
+{
+  "name": "invoice-processing",
+  "nodes": [
+    {
+      "parameters": {
+        "pollTimes": {
+          "item": [
+            {
+              "mode": "everyMinute"
+            }
+          ]
+        },
+        "simple": false,
+        "filters": {},
+        "options": {
+          "dataPropertyAttachmentsPrefixName": "attachment_",
+          "downloadAttachments": true
+        }
+      },
+      "type": "n8n-nodes-base.gmailTrigger",
+      "typeVersion": 1.2,
+      "position": [
+        1340,
+        640
+      ],
+      "id": "100fbeac-f256-4b98-b9f5-0c418ef9c731",
+      "name": "Gmail Trigger",
+      "credentials": {
+        "gmailOAuth2": {
+          "id": "cLfk2IJJzMUbEvpK",
+          "name": "Gmail account"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "operation": "get",
+        "messageId": "={{ $('Gmail Trigger').item.json.id }}",
+        "simple": false,
+        "options": {
+          "dataPropertyAttachmentsPrefixName": "attachment_",
+          "downloadAttachments": true
+        }
+      },
+      "type": "n8n-nodes-base.gmail",
+      "typeVersion": 2.1,
+      "position": [
+        1520,
+        820
+      ],
+      "id": "a6d46799-240e-4722-8f4a-6931920a5887",
+      "name": "Gmail",
+      "webhookId": "f055d222-d6fe-4cc0-a3ab-38ed14ede50c",
+      "credentials": {
+        "gmailOAuth2": {
+          "id": "cLfk2IJJzMUbEvpK",
+          "name": "Gmail account"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "operation": "append",
+        "documentId": {
+          "__rl": true,
+          "value": "1mL-f3BxaGFK1ShL-VuBQqEh5vJY9qKUM3-oHSq8fAdQ",
+          "mode": "list",
+          "cachedResultName": "testtest",
+          "cachedResultUrl": "https://docs.google.com/spreadsheets/d/1mL-f3BxaGFK1ShL-VuBQqEh5vJY9qKUM3-oHSq8fAdQ/edit?usp=drivesdk"
+        },
+        "sheetName": {
+          "__rl": true,
+          "value": 1864558594,
+          "mode": "list",
+          "cachedResultName": "n8n-sheet",
+          "cachedResultUrl": "https://docs.google.com/spreadsheets/d/1mL-f3BxaGFK1ShL-VuBQqEh5vJY9qKUM3-oHSq8fAdQ/edit#gid=1864558594"
+        },
+        "columns": {
+          "mappingMode": "autoMapInputData",
+          "value": {},
+          "matchingColumns": [],
+          "schema": [
+            {
+              "id": "type",
+              "displayName": "type",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true,
+              "removed": false
+            },
+            {
+              "id": "invoice_number",
+              "displayName": "invoice_number",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true,
+              "removed": false
+            },
+            {
+              "id": "invoice_date",
+              "displayName": "invoice_date",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true,
+              "removed": false
+            },
+            {
+              "id": "due_date",
+              "displayName": "due_date",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true,
+              "removed": false
+            },
+            {
+              "id": "document_type",
+              "displayName": "document_type",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true,
+              "removed": false
+            },
+            {
+              "id": "category",
+              "displayName": "category",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true,
+              "removed": false
+            },
+            {
+              "id": "currency",
+              "displayName": "currency",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true,
+              "removed": false
+            },
+            {
+              "id": "supplier_name",
+              "displayName": "supplier_name",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true,
+              "removed": false
+            },
+            {
+              "id": "supplier_address",
+              "displayName": "supplier_address",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true,
+              "removed": false
+            },
+            {
+              "id": "supplier_phone",
+              "displayName": "supplier_phone",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true,
+              "removed": false
+            },
+            {
+              "id": "supplier_email",
+              "displayName": "supplier_email",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true,
+              "removed": false
+            },
+            {
+              "id": "supplier_registration",
+              "displayName": "supplier_registration",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true,
+              "removed": false
+            },
+            {
+              "id": "customer_name",
+              "displayName": "customer_name",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true,
+              "removed": false
+            },
+            {
+              "id": "customer_id",
+              "displayName": "customer_id",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true,
+              "removed": false
+            },
+            {
+              "id": "customer_address",
+              "displayName": "customer_address",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true,
+              "removed": false
+            },
+            {
+              "id": "shipping_address",
+              "displayName": "shipping_address",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true,
+              "removed": false
+            },
+            {
+              "id": "billing_address",
+              "displayName": "billing_address",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true,
+              "removed": false
+            },
+            {
+              "id": "reference_numbers",
+              "displayName": "reference_numbers",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true,
+              "removed": false
+            },
+            {
+              "id": "po_number",
+              "displayName": "po_number",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true,
+              "removed": false
+            },
+            {
+              "id": "total_amount",
+              "displayName": "total_amount",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true,
+              "removed": false
+            },
+            {
+              "id": "total_net",
+              "displayName": "total_net",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true,
+              "removed": false
+            },
+            {
+              "id": "total_tax",
+              "displayName": "total_tax",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true,
+              "removed": false
+            },
+            {
+              "id": "processing_time",
+              "displayName": "processing_time",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true,
+              "removed": false
+            },
+            {
+              "id": "confidence_score",
+              "displayName": "confidence_score",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true,
+              "removed": false
+            },
+            {
+              "id": "pages_count",
+              "displayName": "pages_count",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true,
+              "removed": false
+            },
+            {
+              "id": "document_name",
+              "displayName": "document_name",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true,
+              "removed": false
+            },
+            {
+              "id": "calculated_total",
+              "displayName": "calculated_total",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true,
+              "removed": false
+            },
+            {
+              "id": "line_items",
+              "displayName": "line_items",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true,
+              "removed": false
+            },
+            {
+              "id": "line_items_count",
+              "displayName": "line_items_count",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true,
+              "removed": false
+            }
+          ],
+          "attemptToConvertTypes": false,
+          "convertFieldsToString": false
+        },
+        "options": {
+          "cellFormat": "RAW"
+        }
+      },
+      "type": "n8n-nodes-base.googleSheets",
+      "typeVersion": 4.5,
+      "position": [
+        2220,
+        640
+      ],
+      "id": "9dd5bce8-db36-4d19-964f-d6a0b28e5353",
+      "name": "Google Sheets1",
+      "credentials": {
+        "googleSheetsOAuth2Api": {
+          "id": "bZJogVyMrJ0XSqGL",
+          "name": "Google Sheets account"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "sendTo": "hossamahmed107@gmail.com",
+        "subject": "=Invoices sheet Update",
+        "emailType": "text",
+        "message": "The Google sheet has been updated and ready for review.  Invoice: {{ $json.invoice_number }} Customer: {{ $json.customer_name }} Total:  {{ $json.currency }} Confidence: {{ $json.confidence_score }} Items: {{ $json.line_items_count }} products  Document: {{ $json.document_name }}",
+        "options": {
+          "appendAttribution": false
+        }
+      },
+      "type": "n8n-nodes-base.gmail",
+      "typeVersion": 2.1,
+      "position": [
+        2380,
+        820
+      ],
+      "id": "1c3602a0-2a51-490e-bdfd-3002f6667a77",
+      "name": "Gmail1",
+      "webhookId": "b6455e1a-c229-43e6-89fc-6d7c99e74b46",
+      "credentials": {
+        "gmailOAuth2": {
+          "id": "cLfk2IJJzMUbEvpK",
+          "name": "Gmail account"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "method": "POST",
+        "url": "https://api.mindee.net/v1/products/mindee/invoices/v4/predict",
+        "authentication": "predefinedCredentialType",
+        "nodeCredentialType": "mindeeInvoiceApi",
+        "sendHeaders": true,
+        "headerParameters": {
+          "parameters": [
+            {}
+          ]
+        },
+        "sendBody": true,
+        "contentType": "multipart-form-data",
+        "bodyParameters": {
+          "parameters": [
+            {
+              "parameterType": "formBinaryData",
+              "name": "document",
+              "inputDataFieldName": "attachment_0"
+            }
+          ]
+        },
+        "options": {}
+      },
+      "type": "n8n-nodes-base.httpRequest",
+      "typeVersion": 4.2,
+      "position": [
+        1700,
+        640
+      ],
+      "id": "6e2588d0-0e57-49c6-92ca-e6495e2d3d94",
+      "name": "Mindee",
+      "credentials": {
+        "mindeeInvoiceApi": {
+          "id": "PbbimxhYYDt4JRvQ",
+          "name": "Mindee Invoice account 2"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "jsCode": "// N8N Function Node - Extract Invoice Data for Excel\n// This function extracts key invoice information from the Mindee API response\n\n// Get the input JSON data\nconst inputData = $input.first().json;\n\n// Extract the document prediction data\nconst document = inputData.document;\nconst prediction = document.inference.prediction;\n\n// Extract basic invoice information\nconst invoiceData = {\n  // Invoice Basic Info\n  invoice_number: prediction.invoice_number?.value || '',\n  invoice_date: prediction.date?.value || '',\n  due_date: prediction.due_date?.value || '',\n  document_type: prediction.document_type?.value || '',\n  category: prediction.category?.value || '',\n  currency: prediction.locale?.currency || '',\n  \n  // Supplier Information\n  supplier_name: prediction.supplier_name?.value || '',\n  supplier_address: prediction.supplier_address?.value || '',\n  supplier_phone: prediction.supplier_phone_number?.value || '',\n  supplier_email: prediction.supplier_email?.value || '',\n  supplier_registration: prediction.supplier_company_registrations?.[0]?.value || '',\n  \n  // Customer Information\n  customer_name: prediction.customer_name?.value || '',\n  customer_id: prediction.customer_id?.value || '',\n  customer_address: prediction.customer_address?.value || '',\n  \n  // Shipping & Billing\n  shipping_address: prediction.shipping_address?.value || '',\n  billing_address: prediction.billing_address?.value || '',\n  \n  // Reference Numbers\n  reference_numbers: prediction.reference_numbers?.map(ref => ref.value).join(', ') || '',\n  po_number: prediction.po_number?.value || '',\n  \n  // Totals\n  total_amount: prediction.total_amount?.value || '',\n  total_net: prediction.total_net?.value || '',\n  total_tax: prediction.total_tax?.value || '',\n  \n  // Processing Info\n  processing_time: document.inference.processing_time || '',\n  confidence_score: Math.round((prediction.invoice_number?.confidence || 0) * 100) + '%',\n  pages_count: document.n_pages || 1,\n  document_name: document.name || ''\n};\n\n// Extract line items separately (for a separate sheet or detailed view)\nconst lineItems = prediction.line_items?.map((item, index) => ({\n  line_number: index + 1,\n  product_code: item.product_code || '',\n  description: item.description || '',\n  quantity: item.quantity || 0,\n  unit_price: item.unit_price || 0,\n  unit_measure: item.unit_measure || '',\n  total_amount: item.total_amount || 0,\n  tax_rate: item.tax_rate || '',\n  tax_amount: item.tax_amount || '',\n  confidence: Math.round((item.confidence || 0) * 100) + '%'\n})) || [];\n\n// Calculate totals from line items if main totals are missing\nif (!invoiceData.total_amount && lineItems.length > 0) {\n  invoiceData.calculated_total = lineItems.reduce((sum, item) => sum + (item.total_amount || 0), 0);\n}\n\n// Return the extracted data while maintaining input item reference\n// This follows N8N best practices for expression handling in subsequent nodes\n\nreturn [\n  {\n    json: {\n      type: 'invoice_summary',\n      ...invoiceData,\n      // Include line items in the same object for easier Excel export\n      line_items: lineItems,\n      line_items_count: lineItems.length\n    },\n    // Maintain reference to input item for better N8N expression support\n    pairedItem: { item: 0 }\n  }\n];\n\n// Alternative: If you want everything in one object with line items as an array\n// return [{\n//   json: {\n//     invoice_info: invoiceData,\n//     line_items: lineItems,\n//     summary: {\n//       total_line_items: lineItems.length,\n//       calculated_total: lineItems.reduce((sum, item) => sum + (item.total_amount || 0), 0)\n//     }\n//   }\n// }];"
+      },
+      "type": "n8n-nodes-base.code",
+      "typeVersion": 2,
+      "position": [
+        1920,
+        640
+      ],
+      "id": "58153237-00b0-41b6-90dc-d86c4d555dbc",
+      "name": "Code1"
+    },
+    {
+      "parameters": {
+        "content": "## WorkFlow\n**Double click** to edit me. [Guide](https://docs.n8n.io/workflows/sticky-notes/)",
+        "height": 440,
+        "width": 1320
+      },
+      "type": "n8n-nodes-base.stickyNote",
+      "position": [
+        1300,
+        540
+      ],
+      "typeVersion": 1,
+      "id": "46d3eb75-3676-410f-9276-6efb934fc8f1",
+      "name": "Sticky Note"
+    }
+  ],
+  "pinData": {},
+  "connections": {
+    "Gmail Trigger": {
+      "main": [
+        [
+          {
+            "node": "Gmail",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Gmail": {
+      "main": [
+        [
+          {
+            "node": "Gmail1",
+            "type": "main",
+            "index": 0
+          },
+          {
+            "node": "Mindee",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Google Sheets1": {
+      "main": [
+        [
+          {
+            "node": "Gmail1",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Mindee": {
+      "main": [
+        [
+          {
+            "node": "Code1",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Code1": {
+      "main": [
+        [
+          {
+            "node": "Google Sheets1",
+            "type": "main",
+            "index": 0
+          },
+          {
+            "node": "Gmail1",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    }
+  },
+  "active": false,
+  "settings": {
+    "executionOrder": "v1"
+  },
+  "versionId": "120b9fdc-3433-4568-8ec7-b7c69d518c0b",
+  "meta": {
+    "templateCredsSetupCompleted": true,
+    "instanceId": "782fd9e1dfde19296cc4840d1c0c15c0ccf72f7f59493a6806edb1644cfd3b09"
+  },
+  "id": "CD28p3c5wDMWmnat",
+  "tags": [
+    {
+      "createdAt": "2025-07-25T02:27:48.926Z",
+      "updatedAt": "2025-07-25T02:27:48.926Z",
+      "id": "Pjsztm7vSRKyHNaf",
+      "name": "Mindee"
+    },
+    {
+      "createdAt": "2025-07-25T02:27:53.890Z",
+      "updatedAt": "2025-07-25T02:27:53.890Z",
+      "id": "vcEbjmjgRxq39IKP",
+      "name": "invoices"
+    }
+  ]
+}
