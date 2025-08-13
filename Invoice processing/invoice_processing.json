@@ -1,5 +1,5 @@
 {
-  "name": "invoice-processing",
+  "name": "My workflow 3",
   "nodes": [
     {
       "parameters": {
@@ -11,20 +11,53 @@
           ]
         },
         "simple": false,
-        "filters": {},
-        "options": {
-          "dataPropertyAttachmentsPrefixName": "attachment_",
-          "downloadAttachments": true
-        }
+        "filters": {
+          "readStatus": "unread"
+        },
+        "options": {}
       },
       "type": "n8n-nodes-base.gmailTrigger",
       "typeVersion": 1.2,
       "position": [
-        1340,
-        640
+        -784,
+        400
       ],
-      "id": "100fbeac-f256-4b98-b9f5-0c418ef9c731",
+      "id": "909f01ae-1090-4f89-a7ca-1f63ea53f879",
       "name": "Gmail Trigger",
+      "credentials": {
+        "gmailOAuth2": {
+          "id": "cLfk2IJJzMUbEvpK",
+          "name": "Gmail account"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "sendTo": "hossam.elesawy@student.guc.edu.eg",
+        "subject": "=Invoices sheet Update",
+        "emailType": "text",
+        "message": "The invoices sheet has been updated with a new entry. The related invoice is also attached for your reference.",
+        "options": {
+          "appendAttribution": true,
+          "attachmentsUi": {
+            "attachmentsBinary": [
+              {
+                "property": "attachment_0"
+              }
+            ]
+          }
+        }
+      },
+      "type": "n8n-nodes-base.gmail",
+      "typeVersion": 2.1,
+      "position": [
+        912,
+        400
+      ],
+      "id": "38d734f3-f091-433f-a9d0-32fc58f0c777",
+      "name": "Gmail2",
+      "webhookId": "b6455e1a-c229-43e6-89fc-6d7c99e74b46",
+      "executeOnce": true,
       "credentials": {
         "gmailOAuth2": {
           "id": "cLfk2IJJzMUbEvpK",
@@ -45,11 +78,11 @@
       "type": "n8n-nodes-base.gmail",
       "typeVersion": 2.1,
       "position": [
-        1520,
-        820
+        -560,
+        400
       ],
-      "id": "a6d46799-240e-4722-8f4a-6931920a5887",
-      "name": "Gmail",
+      "id": "e3412b16-876d-411e-b4fd-1991056fd089",
+      "name": "extracting invoice",
       "webhookId": "f055d222-d6fe-4cc0-a3ab-38ed14ede50c",
       "credentials": {
         "gmailOAuth2": {
@@ -60,36 +93,118 @@
     },
     {
       "parameters": {
+        "resource": "document",
+        "modelId": {
+          "__rl": true,
+          "value": "models/gemini-2.5-flash",
+          "mode": "list",
+          "cachedResultName": "models/gemini-2.5-flash"
+        },
+        "text": "You are an invoice data extraction assistant. \nYour task is to read the invoice text provided and return a clean, machine-readable JSON with no extra commentary.\n\nExtract the following fields if available:\n- invoice_number\n- invoice_date (YYYY-MM-DD format)\n- due_date (YYYY-MM-DD format)\n- vendor_name\n- vendor_address\n- vendor_tax_id\n- customer_name\n- customer_address\n- customer_tax_id\n- currency\n- line_items: array of { description, quantity, unit_price, total_price }\n- subtotal\n- tax_amount\n- total_amount\n\nRules:\n1. Use exact field names as listed above.\n2. If a field is missing, set it to null.\n3. Keep numeric values without currency symbols (e.g., 1200.50 not \"$1200.50\").\n4. Dates must be normalized to YYYY-MM-DD.\n5. Only return the JSON, nothing else.\n6. If multiple invoices are detected, return them as an array under `invoices`.\n",
+        "inputType": "binary",
+        "binaryPropertyName": "attachment_0",
+        "options": {}
+      },
+      "type": "@n8n/n8n-nodes-langchain.googleGemini",
+      "typeVersion": 1,
+      "position": [
+        -336,
+        528
+      ],
+      "id": "9f976dad-5426-40e0-b53e-39602697877d",
+      "name": "Analyze document",
+      "credentials": {
+        "googlePalmApi": {
+          "id": "Ui8gRFvAslFWCLsJ",
+          "name": "Google Gemini(PaLM) Api account"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "text": "={{ $json.content.parts[0].text }}",
+        "schemaType": "fromJson",
+        "jsonSchemaExample": "{\n  \"invoice_number\": \"\",\n  \"invoice_date\": \"\",\n  \"due_date\": \"\",\n  \"vendor_name\": \"\",\n  \"vendor_address\": \"\",\n  \"vendor_tax_id\": \"\",\n  \"customer_name\": \"\",\n  \"customer_address\": \"\",\n  \"customer_tax_id\": \"\",\n  \"currency\": \"\",\n  \"line_items\": [\n    {\n      \"description\": \"\",\n      \"quantity\": 0,\n      \"unit_price\": 0,\n      \"total_price\": 0\n    }\n  ],\n  \"subtotal\": \"\",\n  \"tax_amount\": \"\",\n  \"total_amount\": 0\n}\n",
+        "options": {
+          "systemPromptTemplate": "You are an expert information extraction system.\nExtract only the relevant information from the provided text.\nIf an attribute’s value cannot be determined from the text, omit it entirely.\nReturn results in plain text format without placeholders for missing values."
+        }
+      },
+      "type": "@n8n/n8n-nodes-langchain.informationExtractor",
+      "typeVersion": 1.2,
+      "position": [
+        -112,
+        528
+      ],
+      "id": "0179e269-aa2b-4261-bb68-a684306f424a",
+      "name": "Information Extractor"
+    },
+    {
+      "parameters": {
+        "options": {}
+      },
+      "type": "@n8n/n8n-nodes-langchain.lmChatGoogleGemini",
+      "typeVersion": 1,
+      "position": [
+        -112,
+        720
+      ],
+      "id": "00c2569d-d55d-4e46-83cf-ec9fac1cf28f",
+      "name": "Google Gemini Chat Model",
+      "credentials": {
+        "googlePalmApi": {
+          "id": "Ui8gRFvAslFWCLsJ",
+          "name": "Google Gemini(PaLM) Api account"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "jsCode": "// Get the raw data\nconst data = items[0].json.output;\n\n// Convert line_items array to a single string\nconst lineItemsString = data.line_items\n  .map(item => `${item.description} | qty: ${item.quantity} | unit: ${item.unit_price} | total: ${item.total_price}`)\n  .join('; ');\n\n// Return flattened object for Google Sheets\nreturn [\n  {\n    json: {\n      invoice_number: data.invoice_number || null,\n      invoice_date: data.invoice_date || null,\n      due_date: data.due_date || null,\n      vendor_name: data.vendor_name || null,\n      vendor_address: data.vendor_address || null,\n      vendor_tax_id: data.vendor_tax_id || null,\n      customer_name: data.customer_name || null,\n      customer_address: data.customer_address || null,\n      customer_tax_id: data.customer_tax_id || null,\n      currency: data.currency || null,\n      subtotal: data.subtotal || null,\n      tax_amount: data.tax_amount || null,\n      total_amount: data.total_amount || null,\n      line_items: lineItemsString\n    }\n  }\n];\n"
+      },
+      "type": "n8n-nodes-base.code",
+      "typeVersion": 2,
+      "position": [
+        240,
+        528
+      ],
+      "id": "669ce605-715a-4aa9-b807-6e0c7711d589",
+      "name": "Code"
+    },
+    {
+      "parameters": {},
+      "type": "n8n-nodes-base.merge",
+      "typeVersion": 3.2,
+      "position": [
+        688,
+        400
+      ],
+      "id": "ce276368-b682-4cc1-a3a9-e5dc2c6c2edf",
+      "name": "Merge"
+    },
+    {
+      "parameters": {
         "operation": "append",
         "documentId": {
           "__rl": true,
-          "value": "1mL-f3BxaGFK1ShL-VuBQqEh5vJY9qKUM3-oHSq8fAdQ",
+          "value": "1ITgzlN5MlE5P0oN0X4MKdISXpozVhVgUrm9ggunNUsI",
           "mode": "list",
-          "cachedResultName": "testtest",
-          "cachedResultUrl": "https://docs.google.com/spreadsheets/d/1mL-f3BxaGFK1ShL-VuBQqEh5vJY9qKUM3-oHSq8fAdQ/edit?usp=drivesdk"
+          "cachedResultName": "Invoices_Test",
+          "cachedResultUrl": "https://docs.google.com/spreadsheets/d/1ITgzlN5MlE5P0oN0X4MKdISXpozVhVgUrm9ggunNUsI/edit?usp=drivesdk"
         },
         "sheetName": {
           "__rl": true,
-          "value": 1864558594,
+          "value": "gid=0",
           "mode": "list",
-          "cachedResultName": "n8n-sheet",
-          "cachedResultUrl": "https://docs.google.com/spreadsheets/d/1mL-f3BxaGFK1ShL-VuBQqEh5vJY9qKUM3-oHSq8fAdQ/edit#gid=1864558594"
+          "cachedResultName": "Sheet1",
+          "cachedResultUrl": "https://docs.google.com/spreadsheets/d/1ITgzlN5MlE5P0oN0X4MKdISXpozVhVgUrm9ggunNUsI/edit#gid=0"
         },
         "columns": {
           "mappingMode": "autoMapInputData",
           "value": {},
-          "matchingColumns": [],
+          "matchingColumns": [
+            "output"
+          ],
           "schema": [
-            {
-              "id": "type",
-              "displayName": "type",
-              "required": false,
-              "defaultMatch": false,
-              "display": true,
-              "type": "string",
-              "canBeUsedToMatch": true,
-              "removed": false
-            },
             {
               "id": "invoice_number",
               "displayName": "invoice_number",
@@ -121,8 +236,8 @@
               "removed": false
             },
             {
-              "id": "document_type",
-              "displayName": "document_type",
+              "id": "vendor_name",
+              "displayName": "vendor_name",
               "required": false,
               "defaultMatch": false,
               "display": true,
@@ -131,8 +246,8 @@
               "removed": false
             },
             {
-              "id": "category",
-              "displayName": "category",
+              "id": "vendor_address",
+              "displayName": "vendor_address",
               "required": false,
               "defaultMatch": false,
               "display": true,
@@ -141,58 +256,8 @@
               "removed": false
             },
             {
-              "id": "currency",
-              "displayName": "currency",
-              "required": false,
-              "defaultMatch": false,
-              "display": true,
-              "type": "string",
-              "canBeUsedToMatch": true,
-              "removed": false
-            },
-            {
-              "id": "supplier_name",
-              "displayName": "supplier_name",
-              "required": false,
-              "defaultMatch": false,
-              "display": true,
-              "type": "string",
-              "canBeUsedToMatch": true,
-              "removed": false
-            },
-            {
-              "id": "supplier_address",
-              "displayName": "supplier_address",
-              "required": false,
-              "defaultMatch": false,
-              "display": true,
-              "type": "string",
-              "canBeUsedToMatch": true,
-              "removed": false
-            },
-            {
-              "id": "supplier_phone",
-              "displayName": "supplier_phone",
-              "required": false,
-              "defaultMatch": false,
-              "display": true,
-              "type": "string",
-              "canBeUsedToMatch": true,
-              "removed": false
-            },
-            {
-              "id": "supplier_email",
-              "displayName": "supplier_email",
-              "required": false,
-              "defaultMatch": false,
-              "display": true,
-              "type": "string",
-              "canBeUsedToMatch": true,
-              "removed": false
-            },
-            {
-              "id": "supplier_registration",
-              "displayName": "supplier_registration",
+              "id": "vendor_tax_id",
+              "displayName": "vendor_tax_id",
               "required": false,
               "defaultMatch": false,
               "display": true,
@@ -211,16 +276,6 @@
               "removed": false
             },
             {
-              "id": "customer_id",
-              "displayName": "customer_id",
-              "required": false,
-              "defaultMatch": false,
-              "display": true,
-              "type": "string",
-              "canBeUsedToMatch": true,
-              "removed": false
-            },
-            {
               "id": "customer_address",
               "displayName": "customer_address",
               "required": false,
@@ -231,8 +286,8 @@
               "removed": false
             },
             {
-              "id": "shipping_address",
-              "displayName": "shipping_address",
+              "id": "customer_tax_id",
+              "displayName": "customer_tax_id",
               "required": false,
               "defaultMatch": false,
               "display": true,
@@ -241,8 +296,8 @@
               "removed": false
             },
             {
-              "id": "billing_address",
-              "displayName": "billing_address",
+              "id": "currency",
+              "displayName": "currency",
               "required": false,
               "defaultMatch": false,
               "display": true,
@@ -251,8 +306,8 @@
               "removed": false
             },
             {
-              "id": "reference_numbers",
-              "displayName": "reference_numbers",
+              "id": "subtotal",
+              "displayName": "subtotal",
               "required": false,
               "defaultMatch": false,
               "display": true,
@@ -261,8 +316,8 @@
               "removed": false
             },
             {
-              "id": "po_number",
-              "displayName": "po_number",
+              "id": "tax_amount",
+              "displayName": "tax_amount",
               "required": false,
               "defaultMatch": false,
               "display": true,
@@ -281,88 +336,8 @@
               "removed": false
             },
             {
-              "id": "total_net",
-              "displayName": "total_net",
-              "required": false,
-              "defaultMatch": false,
-              "display": true,
-              "type": "string",
-              "canBeUsedToMatch": true,
-              "removed": false
-            },
-            {
-              "id": "total_tax",
-              "displayName": "total_tax",
-              "required": false,
-              "defaultMatch": false,
-              "display": true,
-              "type": "string",
-              "canBeUsedToMatch": true,
-              "removed": false
-            },
-            {
-              "id": "processing_time",
-              "displayName": "processing_time",
-              "required": false,
-              "defaultMatch": false,
-              "display": true,
-              "type": "string",
-              "canBeUsedToMatch": true,
-              "removed": false
-            },
-            {
-              "id": "confidence_score",
-              "displayName": "confidence_score",
-              "required": false,
-              "defaultMatch": false,
-              "display": true,
-              "type": "string",
-              "canBeUsedToMatch": true,
-              "removed": false
-            },
-            {
-              "id": "pages_count",
-              "displayName": "pages_count",
-              "required": false,
-              "defaultMatch": false,
-              "display": true,
-              "type": "string",
-              "canBeUsedToMatch": true,
-              "removed": false
-            },
-            {
-              "id": "document_name",
-              "displayName": "document_name",
-              "required": false,
-              "defaultMatch": false,
-              "display": true,
-              "type": "string",
-              "canBeUsedToMatch": true,
-              "removed": false
-            },
-            {
-              "id": "calculated_total",
-              "displayName": "calculated_total",
-              "required": false,
-              "defaultMatch": false,
-              "display": true,
-              "type": "string",
-              "canBeUsedToMatch": true,
-              "removed": false
-            },
-            {
               "id": "line_items",
               "displayName": "line_items",
-              "required": false,
-              "defaultMatch": false,
-              "display": true,
-              "type": "string",
-              "canBeUsedToMatch": true,
-              "removed": false
-            },
-            {
-              "id": "line_items_count",
-              "displayName": "line_items_count",
               "required": false,
               "defaultMatch": false,
               "display": true,
@@ -374,118 +349,22 @@
           "attemptToConvertTypes": false,
           "convertFieldsToString": false
         },
-        "options": {
-          "cellFormat": "RAW"
-        }
+        "options": {}
       },
       "type": "n8n-nodes-base.googleSheets",
-      "typeVersion": 4.5,
+      "typeVersion": 4.7,
       "position": [
-        2220,
-        640
+        464,
+        528
       ],
-      "id": "9dd5bce8-db36-4d19-964f-d6a0b28e5353",
-      "name": "Google Sheets1",
+      "id": "a588798e-53e3-441a-b765-61f734bff89f",
+      "name": "Append row in sheet",
       "credentials": {
         "googleSheetsOAuth2Api": {
           "id": "bZJogVyMrJ0XSqGL",
           "name": "Google Sheets account"
         }
       }
-    },
-    {
-      "parameters": {
-        "sendTo": "hossamahmed107@gmail.com",
-        "subject": "=Invoices sheet Update",
-        "emailType": "text",
-        "message": "The Google sheet has been updated and ready for review.  Invoice: {{ $json.invoice_number }} Customer: {{ $json.customer_name }} Total:  {{ $json.currency }} Confidence: {{ $json.confidence_score }} Items: {{ $json.line_items_count }} products  Document: {{ $json.document_name }}",
-        "options": {
-          "appendAttribution": false
-        }
-      },
-      "type": "n8n-nodes-base.gmail",
-      "typeVersion": 2.1,
-      "position": [
-        2380,
-        820
-      ],
-      "id": "1c3602a0-2a51-490e-bdfd-3002f6667a77",
-      "name": "Gmail1",
-      "webhookId": "b6455e1a-c229-43e6-89fc-6d7c99e74b46",
-      "credentials": {
-        "gmailOAuth2": {
-          "id": "cLfk2IJJzMUbEvpK",
-          "name": "Gmail account"
-        }
-      }
-    },
-    {
-      "parameters": {
-        "method": "POST",
-        "url": "https://api.mindee.net/v1/products/mindee/invoices/v4/predict",
-        "authentication": "predefinedCredentialType",
-        "nodeCredentialType": "mindeeInvoiceApi",
-        "sendHeaders": true,
-        "headerParameters": {
-          "parameters": [
-            {}
-          ]
-        },
-        "sendBody": true,
-        "contentType": "multipart-form-data",
-        "bodyParameters": {
-          "parameters": [
-            {
-              "parameterType": "formBinaryData",
-              "name": "document",
-              "inputDataFieldName": "attachment_0"
-            }
-          ]
-        },
-        "options": {}
-      },
-      "type": "n8n-nodes-base.httpRequest",
-      "typeVersion": 4.2,
-      "position": [
-        1700,
-        640
-      ],
-      "id": "6e2588d0-0e57-49c6-92ca-e6495e2d3d94",
-      "name": "Mindee",
-      "credentials": {
-        "mindeeInvoiceApi": {
-          "id": "PbbimxhYYDt4JRvQ",
-          "name": "Mindee Invoice account 2"
-        }
-      }
-    },
-    {
-      "parameters": {
-        "jsCode": "// N8N Function Node - Extract Invoice Data for Excel\n// This function extracts key invoice information from the Mindee API response\n\n// Get the input JSON data\nconst inputData = $input.first().json;\n\n// Extract the document prediction data\nconst document = inputData.document;\nconst prediction = document.inference.prediction;\n\n// Extract basic invoice information\nconst invoiceData = {\n  // Invoice Basic Info\n  invoice_number: prediction.invoice_number?.value || '',\n  invoice_date: prediction.date?.value || '',\n  due_date: prediction.due_date?.value || '',\n  document_type: prediction.document_type?.value || '',\n  category: prediction.category?.value || '',\n  currency: prediction.locale?.currency || '',\n  \n  // Supplier Information\n  supplier_name: prediction.supplier_name?.value || '',\n  supplier_address: prediction.supplier_address?.value || '',\n  supplier_phone: prediction.supplier_phone_number?.value || '',\n  supplier_email: prediction.supplier_email?.value || '',\n  supplier_registration: prediction.supplier_company_registrations?.[0]?.value || '',\n  \n  // Customer Information\n  customer_name: prediction.customer_name?.value || '',\n  customer_id: prediction.customer_id?.value || '',\n  customer_address: prediction.customer_address?.value || '',\n  \n  // Shipping & Billing\n  shipping_address: prediction.shipping_address?.value || '',\n  billing_address: prediction.billing_address?.value || '',\n  \n  // Reference Numbers\n  reference_numbers: prediction.reference_numbers?.map(ref => ref.value).join(', ') || '',\n  po_number: prediction.po_number?.value || '',\n  \n  // Totals\n  total_amount: prediction.total_amount?.value || '',\n  total_net: prediction.total_net?.value || '',\n  total_tax: prediction.total_tax?.value || '',\n  \n  // Processing Info\n  processing_time: document.inference.processing_time || '',\n  confidence_score: Math.round((prediction.invoice_number?.confidence || 0) * 100) + '%',\n  pages_count: document.n_pages || 1,\n  document_name: document.name || ''\n};\n\n// Extract line items separately (for a separate sheet or detailed view)\nconst lineItems = prediction.line_items?.map((item, index) => ({\n  line_number: index + 1,\n  product_code: item.product_code || '',\n  description: item.description || '',\n  quantity: item.quantity || 0,\n  unit_price: item.unit_price || 0,\n  unit_measure: item.unit_measure || '',\n  total_amount: item.total_amount || 0,\n  tax_rate: item.tax_rate || '',\n  tax_amount: item.tax_amount || '',\n  confidence: Math.round((item.confidence || 0) * 100) + '%'\n})) || [];\n\n// Calculate totals from line items if main totals are missing\nif (!invoiceData.total_amount && lineItems.length > 0) {\n  invoiceData.calculated_total = lineItems.reduce((sum, item) => sum + (item.total_amount || 0), 0);\n}\n\n// Return the extracted data while maintaining input item reference\n// This follows N8N best practices for expression handling in subsequent nodes\n\nreturn [\n  {\n    json: {\n      type: 'invoice_summary',\n      ...invoiceData,\n      // Include line items in the same object for easier Excel export\n      line_items: lineItems,\n      line_items_count: lineItems.length\n    },\n    // Maintain reference to input item for better N8N expression support\n    pairedItem: { item: 0 }\n  }\n];\n\n// Alternative: If you want everything in one object with line items as an array\n// return [{\n//   json: {\n//     invoice_info: invoiceData,\n//     line_items: lineItems,\n//     summary: {\n//       total_line_items: lineItems.length,\n//       calculated_total: lineItems.reduce((sum, item) => sum + (item.total_amount || 0), 0)\n//     }\n//   }\n// }];"
-      },
-      "type": "n8n-nodes-base.code",
-      "typeVersion": 2,
-      "position": [
-        1920,
-        640
-      ],
-      "id": "58153237-00b0-41b6-90dc-d86c4d555dbc",
-      "name": "Code1"
-    },
-    {
-      "parameters": {
-        "content": "## WorkFlow\n**Double click** to edit me. [Guide](https://docs.n8n.io/workflows/sticky-notes/)",
-        "height": 440,
-        "width": 1320
-      },
-      "type": "n8n-nodes-base.stickyNote",
-      "position": [
-        1300,
-        540
-      ],
-      "typeVersion": 1,
-      "id": "46d3eb75-3676-410f-9276-6efb934fc8f1",
-      "name": "Sticky Note"
     }
   ],
   "pinData": {},
@@ -494,90 +373,110 @@
       "main": [
         [
           {
-            "node": "Gmail",
+            "node": "extracting invoice",
             "type": "main",
             "index": 0
           }
         ]
       ]
     },
-    "Gmail": {
+    "extracting invoice": {
       "main": [
         [
           {
-            "node": "Gmail1",
+            "node": "Analyze document",
             "type": "main",
             "index": 0
           },
           {
-            "node": "Mindee",
+            "node": "Merge",
             "type": "main",
             "index": 0
           }
         ]
       ]
     },
-    "Google Sheets1": {
+    "Analyze document": {
       "main": [
         [
           {
-            "node": "Gmail1",
+            "node": "Information Extractor",
             "type": "main",
             "index": 0
           }
         ]
       ]
     },
-    "Mindee": {
+    "Google Gemini Chat Model": {
+      "ai_languageModel": [
+        [
+          {
+            "node": "Information Extractor",
+            "type": "ai_languageModel",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Information Extractor": {
       "main": [
         [
           {
-            "node": "Code1",
+            "node": "Code",
             "type": "main",
             "index": 0
           }
         ]
       ]
     },
-    "Code1": {
+    "Code": {
       "main": [
         [
           {
-            "node": "Google Sheets1",
+            "node": "Append row in sheet",
             "type": "main",
             "index": 0
-          },
+          }
+        ]
+      ]
+    },
+    "Gmail2": {
+      "main": [
+        []
+      ]
+    },
+    "Merge": {
+      "main": [
+        [
           {
-            "node": "Gmail1",
+            "node": "Gmail2",
             "type": "main",
             "index": 0
+          }
+        ]
+      ]
+    },
+    "Append row in sheet": {
+      "main": [
+        [
+          {
+            "node": "Merge",
+            "type": "main",
+            "index": 1
           }
         ]
       ]
     }
   },
-  "active": false,
+  "active": true,
   "settings": {
     "executionOrder": "v1"
   },
-  "versionId": "120b9fdc-3433-4568-8ec7-b7c69d518c0b",
+  "versionId": "3222d524-6752-49d7-b9d5-d2d4b9431614",
   "meta": {
     "templateCredsSetupCompleted": true,
     "instanceId": "782fd9e1dfde19296cc4840d1c0c15c0ccf72f7f59493a6806edb1644cfd3b09"
   },
-  "id": "CD28p3c5wDMWmnat",
-  "tags": [
-    {
-      "createdAt": "2025-07-25T02:27:48.926Z",
-      "updatedAt": "2025-07-25T02:27:48.926Z",
-      "id": "Pjsztm7vSRKyHNaf",
-      "name": "Mindee"
-    },
-    {
-      "createdAt": "2025-07-25T02:27:53.890Z",
-      "updatedAt": "2025-07-25T02:27:53.890Z",
-      "id": "vcEbjmjgRxq39IKP",
-      "name": "invoices"
-    }
-  ]
+  "id": "9iSWXYnE5IxRzsji",
+  "tags": []
 }
