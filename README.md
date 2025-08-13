@@ -28,7 +28,7 @@ The workflow consists of 9 interconnected nodes that handle the entire invoice p
 - **Type**: `@n8n/n8n-nodes-langchain.googleGemini`
 - **Function**: Uses Google Gemini 2.5 Flash model to analyze invoice documents
 - **Configuration**:
-  - Model: `models/gemini-2.5-flash`
+  - Model: `models/gemini-2.5-flash`(FreeModel)
   - Processes binary attachment data
   - Custom prompt for structured invoice data extraction
 
@@ -58,7 +58,6 @@ The workflow consists of 9 interconnected nodes that handle the entire invoice p
 - **Function**: Adds extracted invoice data to Google Sheets
 - **Configuration**:
   - Operation: Append new row
-  - Document ID: `1ITgzlN5MlE5P0oN0X4MKdISXpozVhVgUrm9ggunNUsI`
   - Auto-maps input data to sheet columns
 
 ### 8. **Merge Node**
@@ -70,7 +69,7 @@ The workflow consists of 9 interconnected nodes that handle the entire invoice p
 - **Type**: `n8n-nodes-base.gmail`
 - **Function**: Sends confirmation email with original invoice attachment
 - **Configuration**:
-  - Recipient: `hossam.elesawy@student.guc.edu.eg`
+  - Recipient: `hossam.elesawy@student.guc.edu.eg`(Chnage this to an accessible mail for you)
   - Subject: "Invoices sheet Update"
   - Includes original attachment
 
